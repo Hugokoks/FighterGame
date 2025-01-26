@@ -1,45 +1,47 @@
-import Phaser from "phaser";
+import Phaser, { Tilemaps } from "phaser";
+import spriteConfig from "./spriteConfig";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, texture) {
+  constructor(scene, x, y, texture, spriteName) {
     super(scene, x, y, texture);
+
+    this.spriteName = spriteName;
+    this.frames = spriteConfig[spriteName].frames;
+
 
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setCollideWorldBounds(true);
     this.createAnimations(scene);
 
+
     /////physics
-    this.defaultGravity = 1500; // Normal gravity strength
-    this.jumpGravity = 500;
-    this.body.setGravityY(this.defaultGravity); // Adjust gravity strength as needed
     this.velocityY = 0;
-    this.accelerationY = 25;
+    this.accelerationY = 60;
     this.speed = 1000;
-    this.jumpStrength = -150;
-    this.maxJumpedVelocity = -1800;
+    this.jumpStrength = -500;
+    this.maxJumpedVelocity = -1200;
     this.jumped = false;
+    this.body.setGravityY(this.accelerationY); // Adjust gravity strength as needed
 
     /////control
     this.cursors = null;
 
+    this.setScale(4);
+
+    ////hitbox sizing
     this.widthHitBox = 0.2;
     this.heightHitBox = 0.3;
 
-    // Scale the sprite
-    this.setScale(4); // Example: Doubles the sprite's size
-
-    // Customize the hitbox size
     this.body.setSize(
       this.width * this.widthHitBox,
       this.height * this.heightHitBox
-    ); // Adjust size (e.g., 80% width, 90% height)
+    );
 
-    // Reposition the hitbox
     this.body.setOffset(
       this.width * this.widthHitBox * 2,
       this.height * this.heightHitBox
-    ); // Center the hitbox (or fine-tune as needed)a
+    );
   }
 
   setInput(cursors) {
@@ -59,15 +61,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     /////horizontal movement
     if (left.isDown) {
       this.setVelocityX(-this.speed);
-    } else if (right.isDown) {
+    }
+    else if (right.isDown) {
+
       this.setVelocityX(this.speed);
     }
-
     /////jumping
-
     if (up.isDown && this.isOnGround()) {
       this.jumped = true;
     }
+
   }
 
   physics() {
@@ -80,6 +83,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     //////falling physics with aceleration
     if (!this.isOnGround() && !this.jumped) {
+
       this.velocityY = this.velocityY + this.accelerationY;
       this.setVelocityY(this.velocityY);
     }
@@ -90,15 +94,75 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+
+  handleAnimation() {
+    const { x: velocityX } = this.body.velocity;
+
+    if (!this.isOnGround()) {
+      if (this.velocityY < 0) {
+        this.play("jump", true)
+      }
+      if (this.velocityY > 0) {
+        this.play("fall", true);
+      }
+    }
+    else {
+      if (velocityX) {
+        this.play("run", true);
+      }
+      if (velocityX === 0) {
+        this.play("idle", true);
+      }
+    }
+  }
+
   createAnimations(scene) {
+
     scene.anims.create({
       key: "idle",
       frames: scene.anims.generateFrameNumbers("idle", {
         start: 0,
-        end: 7,
+        end: this.frames.idle,
       }),
       frameRate: 12,
       repeat: -1,
     });
+    scene.anims.create({
+      key: "run",
+      frames: scene.anims.generateFrameNumbers("run", {
+        start: 0,
+        end: this.frames.run,
+      }),
+      frameRate: 12,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: "jump",
+      frames: scene.anims.generateFrameNumbers("jump", {
+        start: 0,
+        end: this.frames.jump,
+      }),
+      frameRate: 8,
+      repeat: -1,
+    });
+    scene.anims.create({
+      key: "fall",
+      frames: scene.anims.generateFrameNumbers("fall", {
+        start: 0,
+        end: this.frames.fall,
+      }),
+      frameRate: 8,
+      repeat: -1,
+    });
   }
+
+  update() {
+
+    this.move();
+    this.physics();
+    this.handleAnimation();
+
+  }
+
+
 }
