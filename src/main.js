@@ -1,18 +1,20 @@
 import Phaser from "phaser";
-import MainScene from "./GameScene";
+import MainScene from "./scenes/MainScene";
+import Menu from "./scenes/Menu";
+import CharacterSelect from "./scenes/CharacterSelect";
 
 const config = {
   type: Phaser.AUTO,
   width: window.innerWidth,
   height: window.innerHeight,
   parent: "game-container", // ID of your HTML container
-  backgroundColor: "#028af8",
+  backgroundColor: "#ffffff",
 
   physics: {
     default: "arcade", // Enable Arcade Physics
     arcade: {
       gravity: { y: 0 }, // No gravity for top-down movement
-      debug: true, // Enable physics debug information (optional)
+      debug: false, // Enable physics debug information (optional)
     },
   },
   scale: {

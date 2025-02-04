@@ -4,15 +4,11 @@ class HealthBar {
 
 
     constructor(scene, x, y, width, height, maxHealth) {
-
         this.scene = scene;
-
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-
-
 
         //// container under real health bar
         this.container = this.scene.add.graphics();

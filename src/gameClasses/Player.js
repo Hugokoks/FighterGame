@@ -1,19 +1,21 @@
 import Phaser from "phaser";
-import spriteConfig from "./spriteConfig";
+import spriteConfig from "../spriteConfig";
+import createAnimations from "../functions/createAnimations";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, texture, spriteName) {
     super(scene, x, y, texture);
 
     this.spriteName = spriteName;
-    this.frames = spriteConfig[spriteName].frames;
-    this.frameRate = spriteConfig[spriteName].frameRate;
+
     scene.add.existing(this);
     scene.physics.add.existing(this);
     this.setCollideWorldBounds(true);
-    this.createAnimations(scene);
 
-    this.health = 100;
+
+    createAnimations(scene, this.spriteName)
+
+
 
     /////physics
     this.velocityY = 0;
@@ -30,11 +32,20 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.cursors = null;
 
 
+    //////vitality 
+    this.health = 100;
+    this.isImmune = false;
+    this.isDeath = false;
+    this.isHit = false;
+
+
     ////player hitbox sizing
     this.setScale(4);
 
+    this.heightOffset = spriteConfig[spriteName].heightOffset;
     this.widthHitBox = 0.15;
     this.heightHitBox = 0.3;
+
 
     this.body.setSize(
       this.width * this.widthHitBox,
@@ -43,7 +54,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.body.setOffset(
       this.width * this.widthHitBox * 2.8,
-      this.height * this.heightHitBox
+      this.height * this.heightOffset
     );
 
     ////attack hitbox properties
@@ -70,7 +81,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   attack(scene) {
-    if (this.attackCooldown) return;
+    if (this.attackCooldown || this.isHit || this.isDeath) return;
 
     this.lastAttackTime = scene.time.now;
 
@@ -84,8 +95,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.y,
         this.hitboxWidth,
         this.hitboxHeight,
-        0xff0000
+        //0xff0000
       );
+
       scene.physics.add.existing(this.attackHitbox);
       this.attackHitbox.body.allowGravity = false;
 
@@ -110,9 +122,18 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     });
 
   }
+  resetImmune() {
+    this.x = this.x + (this.flipX ? +50 : -50);
+
+    this.scene.time.delayedCall(300, () => {
+      this.isImmune = false;
+      this.isHit = false;
+
+    })
+  }
 
   move() {
-    if (!this.cursors) return;
+    if (!this.cursors || this.isDeath) return;
 
     const { left, right, up, attackKey } = this.cursors;
     this.setVelocity(0);
@@ -172,6 +193,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
   handleAnimation() {
     const { x: velocityX } = this.body.velocity;
+
+    if (this.isDeath) {
+      if (this.anims.currentAnim && this.anims.currentAnim.key !== `${this.spriteName}_death`) {
+        this.play(`${this.spriteName}_death`, true);
+      }
+      return
+    }
+    if (this.isHit) {
+      this.play(`${this.spriteName}_takeHit`, true);
+      return
+    }
     if (this.attackCooldown) {
       this.play(`${this.spriteName}_attack${this.currentAttackAnimation}`, true);
       return; // Skip the other animations if attacking
@@ -192,28 +224,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.play(`${this.spriteName}_idle`, true);
       }
     }
-
   }
+  death() {
 
-  createAnimations(scene) {
-
-    const keys = Object.keys(this.frames);
-    for (const key of keys) {
-
-      scene.anims.create({
-        key: `${this.spriteName}_${key}`,
-        frames: scene.anims.generateFrameNumbers(`${this.spriteName}_${key}`, {
-          start: 0,
-          end: this.frames[key],
-        }),
-        frameRate: this.frameRate[key],
-        repeat: -1,
-      });
-    }
-
+    this.isDeath = true;
+    this.setVelocityX(0);
   }
-
   update() {
+
+    if (this.health <= 0) this.death();
     if (this.attackHitbox) {
       const offset = 220 // Same offset as in the attack method
       this.attackHitbox.x = this.x + (this.flipX ? -offset : offset);
@@ -224,4 +243,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     this.handleAnimation();
     this.resetAttackAnimation();
   }
+
+
 }
