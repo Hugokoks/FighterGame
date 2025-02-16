@@ -2,6 +2,7 @@ import Phaser from "phaser";
 import MainScene from "./scenes/MainScene";
 import Menu from "./scenes/Menu";
 import CharacterSelect from "./scenes/CharacterSelect";
+import MapSelect from "./scenes/MapSelect";
 
 const config = {
   type: Phaser.AUTO,
@@ -21,7 +22,7 @@ const config = {
     mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
-  scene: [MainScene],
+  scene: [Menu, CharacterSelect, MapSelect, MainScene],
 };
 
 // Create a new Phaser game instance

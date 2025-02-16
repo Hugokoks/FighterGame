@@ -14,6 +14,7 @@ function spritePreload(scene, spriteName) {
             frameWidth: width,
             frameHeight: height,
         });
+
     }
 }
 

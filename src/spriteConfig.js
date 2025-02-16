@@ -32,6 +32,9 @@ const spriteConfig = {
 
         }
     },
+
+
+
     Kenji: {
         width: 200,
         height: 200,
@@ -59,7 +62,41 @@ const spriteConfig = {
             death: 8,
             takeHit: 8,
         }
+    },
+
+
+
+
+    Cole: {
+        width: 126,
+        height: 126,
+        heightOffset: 0.34,
+        frames: {
+            idle: 9,
+            run: 7,
+            jump: 2,
+            fall: 2,
+            attack1: 7,
+            attack2: 5,
+            death: 10,
+            takeHit: 2,
+
+        },
+        attackAnimations: 2,
+
+        frameRate: {
+            idle: 12,
+            run: 12,
+            jump: 8,
+            fall: 8,
+            attack1: 12,
+            attack2: 12,
+            death: 12,
+            takeHit: 8,
+        }
+
     }
+
 }
 
 

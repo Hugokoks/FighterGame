@@ -2,29 +2,35 @@ import Player from "../gameClasses/Player";
 import spritePreload from "../functions/spritePreload";
 import HealthBar from "../gameClasses/HealtBar";
 import Timer from "../gameClasses/Timer";
+import OptionBar from "../gameClasses/OptionBar";
 class MainScene extends Phaser.Scene {
   constructor() {
     super("MainScene"); // Set a unique key for this scene
   }
-
+  init(data) {
+    this.characters = data.characters;
+    this.map = data.map;
+    this.mode = data.mode;
+  }
   preload() {
+    /*
     spritePreload(this, 'MartialHero');
     spritePreload(this, 'Kenji');
-    this.load.image("Background", "../assets/Background/Summer8.png");
+    this.load.image(desert1, `../assets/Background/desert1.png`);
+
+     */
   }
 
   create() {
     const { width, height } = this.scale;
-    this.bg = this.add.image(0, 0, "Background").setOrigin(0, 0);
+    this.bg = this.add.image(0, 0, this.map).setOrigin(0, 0);
     this.bg.setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
-
 
     ////////Timer
     this.timer = new Timer(this, width / 2, 100, 120);
 
-
     /////Player 1 defining
-    this.player1 = new Player(this, 0, height / 2, "MartialHero_idle", "MartialHero");
+    this.player1 = new Player(this, 0, height / 2, `${this.characters.p1}_idle`, this.characters.p1);
     this.cursors1 = {
       up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W),
       left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A),
@@ -35,7 +41,7 @@ class MainScene extends Phaser.Scene {
     this.player1.setInput(this.cursors1);
 
     /////Player 2 defining
-    this.player2 = new Player(this, width, height / 2, `Kenji_idle`, "Kenji");
+    this.player2 = new Player(this, width, height / 2, `${this.characters.p2}_idle`, this.characters.p2);
     this.cursors2 = {
       up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
       left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
@@ -54,6 +60,30 @@ class MainScene extends Phaser.Scene {
 
     this.HealthBar1 = new HealthBar(this, healthBar_x, healthBar_y, healthBarWidth, healthBarHeight, this.player1.health);
     this.HealthBar2 = new HealthBar(this, width - healthBarWidth - healthBar_x, healthBar_y, healthBarWidth, healthBarHeight, this.player2.health);
+
+
+    /////option bar 
+
+    this.optionBar = new OptionBar(this, { mode: this.mode, characters: this.characters });
+
+    this.escapeKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+
+    this.optionBarElements = [
+      this.optionBar.container,
+      this.optionBar.textMenu,
+      this.optionBar.textCharacter,
+      this.optionBar.textMap
+    ];
+
+    // Hide all OptionBar elements initially
+    this.optionBarElements.forEach(el => el.setVisible(false));
+
+    this.optionBarVisible = false; // Track visibility
+
+    this.escapeKey.on('down', () => {
+      this.optionBarVisible = !this.optionBarVisible; // Toggle state
+      this.optionBarElements.forEach(el => el.setVisible(this.optionBarVisible));
+    });
 
     ////ground 
     const groundRect = this.add.rectangle(width / 2, height - 10, width, 100);
@@ -89,10 +119,6 @@ class MainScene extends Phaser.Scene {
 
     //////////////game end condition
     if (this.player1.health <= 0 || this.player2.health <= 0 || this.timer.initTime <= 0) this.gameover();
-
-
-
-
 
   }
   handleAttackCollision(attacker, target) {
