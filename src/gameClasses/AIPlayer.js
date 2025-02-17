@@ -61,8 +61,6 @@ export default class AIPlayer extends Player {
             }
         }
 
-        console.log(this.y, this.target.y)
-
         if (isInCorner && distance <= this.attackDistance) {
             this.state = 'attack';
         }
@@ -86,6 +84,7 @@ export default class AIPlayer extends Player {
             default:
                 break;
         }
+
 
     }
 
@@ -122,7 +121,7 @@ export default class AIPlayer extends Player {
     }
 
     moodChangeInterval() {
-        const delay = Phaser.Math.Between(1000, 3000);
+        const delay = Phaser.Math.Between(500, 1000);
         this.scene.time.delayedCall(delay, () => {
             this.changeMood();
             this.moodChangeInterval();

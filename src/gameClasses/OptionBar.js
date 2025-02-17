@@ -8,7 +8,6 @@ class OptionBar {
         this.height = 500;
         this.data = data;
 
-        console.log(this.data);
         const { width: screenWidth, height: screenHeight } = this.scene.scale;
 
         this.x = (screenWidth / 2) - (this.width / 2);

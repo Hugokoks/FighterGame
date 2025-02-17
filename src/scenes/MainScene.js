@@ -9,14 +9,17 @@ class MainScene extends Phaser.Scene {
     super("MainScene"); // Set a unique key for this scene
   }
   init(data) {
+
     this.characters = data.characters;
     this.map = data.map;
     this.mode = data.mode;
+
   }
   preload() {
 
-    /*
+
     ////preload for testing 
+    /**
     spritePreload(this, 'Cole');
     spritePreload(this, 'Kenji');
     this.load.image("desert1", `../assets/Background/desert1.png`);

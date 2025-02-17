@@ -20,7 +20,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     /////physics
     this.velocityY = 0;
     this.accelerationY = 60;
-    this.movementSpeedInAttack = 500;
+    this.movementSpeedInAttack = 300;
     this.maxMovementSpeed = 1000;
     this.movementSpeed = 1000;
     this.jumpStrength = -500;
@@ -112,7 +112,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
       });
     });
-
+    ////decrease speed when you attack :D slow down boy 
+    this.movementSpeed = this.movementSpeedInAttack;
     // Set cooldown
     this.attackCooldown = true;
     scene.time.delayedCall(this.attackCooldownTime, () => {
@@ -155,8 +156,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     if (attackKey.isDown && !this.attackCooldown) {
       this.attack(this.scene);
 
-      ////decrease speed when you attack :D slow down boy 
-      this.movementSpeed = this.movementSpeedInAttack;
+
 
     }
 
