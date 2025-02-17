@@ -4,7 +4,6 @@ class MapSelect extends Phaser.Scene {
 
     constructor() {
         super({ key: "MapSelect" });
-        this.selectedMap = null;
 
         this.mapConfig = [
             { name: "meadow1" },
@@ -17,6 +16,8 @@ class MapSelect extends Phaser.Scene {
     init(data) {
         this.mode = data.mode;
         this.characters = data.characters;
+        this.selectedMap = null;
+
     }
     preload() {
 
@@ -95,6 +96,8 @@ class MapSelect extends Phaser.Scene {
         hoverChange([this.textBack, this.textNext]);
 
         this.textBack.on("pointerdown", () => {
+
+
             this.time.delayedCall(100, () => {
                 this.scene.start("CharacterSelect", { mode: this.mode });
             });

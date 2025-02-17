@@ -1,4 +1,5 @@
 import Player from "../gameClasses/Player";
+import AIPlayer from "../gameClasses/AIPlayer";
 import spritePreload from "../functions/spritePreload";
 import HealthBar from "../gameClasses/HealtBar";
 import Timer from "../gameClasses/Timer";
@@ -13,15 +14,26 @@ class MainScene extends Phaser.Scene {
     this.mode = data.mode;
   }
   preload() {
-    /*
-    spritePreload(this, 'MartialHero');
-    spritePreload(this, 'Kenji');
-    this.load.image(desert1, `../assets/Background/desert1.png`);
 
-     */
+    /*
+    ////preload for testing 
+    spritePreload(this, 'Cole');
+    spritePreload(this, 'Kenji');
+    this.load.image("desert1", `../assets/Background/desert1.png`);
+ */
   }
 
   create() {
+
+    /*
+    //////just for testing
+    this.characters = {
+      p1: 'Cole',
+      p2: 'Kenji',
+    }
+    this.map = 'desert1';
+    this.mode = 'AIPlayer';
+ */
     const { width, height } = this.scale;
     this.bg = this.add.image(0, 0, this.map).setOrigin(0, 0);
     this.bg.setDisplaySize(this.sys.game.config.width, this.sys.game.config.height);
@@ -41,16 +53,28 @@ class MainScene extends Phaser.Scene {
     this.player1.setInput(this.cursors1);
 
     /////Player 2 defining
-    this.player2 = new Player(this, width, height / 2, `${this.characters.p2}_idle`, this.characters.p2);
-    this.cursors2 = {
-      up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-      left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-      right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-      attackKey: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_ZERO),
 
-    };
+    if (this.mode === "2players") {
 
-    this.player2.setInput(this.cursors2);
+      this.player2 = new Player(this, width, height / 2, `${this.characters.p2}_idle`, this.characters.p2);
+      this.cursors2 = {
+        up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
+        left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
+        right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
+        attackKey: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NUMPAD_ZERO),
+
+      };
+      this.player2.setInput(this.cursors2);
+
+    }
+
+    if (this.mode === "AIPlayer") {
+
+      this.player2 = new AIPlayer(this, width, height / 2, `${this.characters.p2}_idle`, this.characters.p2);
+      this.player2.setTarget(this.player1);
+
+    }
+
 
     /////health bars
     const healthBarWidth = 600;

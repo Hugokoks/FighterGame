@@ -6,16 +6,18 @@ class CharacterSelect extends Phaser.Scene {
     constructor() {
         super({ key: "CharacterSelect" });
 
+    }
+
+    init(data) {
+        this.mode = data.mode;
+
+
         this.playerSelecting = 'p1'; // Track which player is selecting a character
         this.selectedPlayers = {
             p1: "",
             p2: "",
         };
 
-    }
-
-    init(data) {
-        this.mode = data.mode;
 
     }
     preload() {
@@ -34,7 +36,7 @@ class CharacterSelect extends Phaser.Scene {
             ch3: { name: "Cole", position: { x: width / 2 - 400, y: height / 2.8 } }
 
         };
-
+        console.log(this.playerSelecting)
         this.bg = this.add.image(0, 0, "Background").setOrigin(0, 0);
         this.bg.setDisplaySize(width, height);
 
@@ -90,13 +92,17 @@ class CharacterSelect extends Phaser.Scene {
         hoverChange([this.textBack, this.textNext]);
 
         this.textBack.on("pointerdown", () => {
+            this.playerSelecting = 'p1';
+            this.selectedPlayers.p1 = "";
+            this.selectedPlayers.p2 = "";
+
             this.time.delayedCall(100, () => {
                 this.scene.start("Menu");
             });
         });
 
         this.textNext.on("pointerdown", () => {
-            if (this.selectedPlayers.p1 === '' && this.selectedPlayers.p2 === '') return;
+            if (this.selectedPlayers.p1 === '' || this.selectedPlayers.p2 === '') return;
 
 
             this.time.delayedCall(100, () => {

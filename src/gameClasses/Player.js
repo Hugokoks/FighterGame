@@ -200,14 +200,15 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       }
       return
     }
-    if (this.isHit) {
-      this.play(`${this.spriteName}_takeHit`, true);
-      return
-    }
     if (this.attackCooldown) {
       this.play(`${this.spriteName}_attack${this.currentAttackAnimation}`, true);
       return; // Skip the other animations if attacking
     }
+    if (this.isHit) {
+      this.play(`${this.spriteName}_takeHit`, true);
+      return
+    }
+
     if (!this.isOnGround()) {
       if (this.velocityY < 0) {
         this.play(`${this.spriteName}_jump`, true)

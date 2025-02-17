@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import hoverChange from "../functions/hoverChange";
-import OptionBar from "../gameClasses/OptionBar";
 
 class Menu extends Phaser.Scene {
 
@@ -43,6 +42,11 @@ class Menu extends Phaser.Scene {
             })
         });
 
+        this.textLocalAiPlayer.on("pointerdown", () => {
+            this.time.delayedCall(100, () => {
+                this.scene.start("CharacterSelect", { mode: 'AIPlayer' });
+            })
+        });
     }
 }
 
